@@ -1,0 +1,29 @@
+import glob
+import os
+import re
+
+import pandas as pd
+
+#read all CSVs and create data frame for team name
+dfs = []
+for path in glob.glob("data/team-*-review-comments.csv"):
+    team = re.search(r"team-(\d+)-", os.path.basename(path)).group(1)
+    df = pd.read_csv(path)
+    df["team"] = team
+    dfs.append(df)
+
+
+# concatenate all reviews by team
+all_reviews = pd.concat(dfs, ignore_index=True)
+
+
+#fix continuity error for label
+all_reviews["Code"] = all_reviews["Code"].str.strip().replace({"updating": "Updating"})
+
+
+#normalize timestamps to UTC (source offsets mix -07:00 / -08:00 across PST/PDT)
+all_reviews["created_at"] = pd.to_datetime(all_reviews["created_at"], utc=True)
+all_reviews["updated_at"] = pd.to_datetime(all_reviews["updated_at"], utc=True)
+
+
+all_reviews = all_reviews.sort_values("created_at", ignore_index=True)
