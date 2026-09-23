@@ -1,6 +1,8 @@
 from read_csv import load_reviews
+from read_csv import dedupe_frame
 
 df = load_reviews()
+deduped_df = df.dedupe_frame(df)
 
 # how many rows and unique comment IDs
 print(len(df), df["comment_id"].nunique())
