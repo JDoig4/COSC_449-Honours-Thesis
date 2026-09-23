@@ -1,0 +1,62 @@
+=== shape ===
+raw rows:                   16272
+deduped rows:               14453
+rows dropped:               1819 (11.2% of raw)
+distinct comment_id, raw:   11138
+distinct comment_id, dedup: 11138
+
+=== corpus ===
+teams:          22
+commenters:     106
+pull requests:  2796
+labels:         14
+first comment:  2023-09-30 20:39:04+00:00
+last comment:   2024-04-16 01:06:00+00:00
+
+=== label distribution ===
+                raw  deduped  pct_change  pct_of_deduped
+Code                                                    
+Approving      3730     3420        -8.3            23.7
+Empty          3685     3525        -4.3            24.4
+Updating       2684     2168       -19.2            15.0
+Directing      2075     1706       -17.8            11.8
+Criticizing    1287     1075       -16.5             7.4
+Complimenting   633      585        -7.6             4.0
+Explaining      490      387       -21.0             2.7
+Asking          473      431        -8.9             3.0
+Thanking        335      332        -0.9             2.3
+Agreeing        286      277        -3.1             1.9
+Suggesting      253      225       -11.1             1.6
+Encouraging     199      187        -6.0             1.3
+Disagreeing     103       97        -5.8             0.7
+Apologizing      39       38        -2.6             0.3
+
+=== duplicate rate by team ===
+      rows  dropped   pct
+team                     
+1     3841      429  11.2
+2      804      192  23.9
+3     2729      123   4.5
+4      514       59  11.5
+5      575       71  12.3
+6      258        3   1.2
+7      797       81  10.2
+8      656      125  19.1
+9      832       14   1.7
+10     576       64  11.1
+11     310       46  14.8
+12     362       18   5.0
+13     247       34  13.8
+14     998      215  21.5
+15      95       12  12.6
+16     307       14   4.6
+17     227        4   1.8
+18     240        6   2.5
+19     280       38  13.6
+20     325       44  13.5
+21    1041      227  21.8
+22     258        0   0.0
+
+teams with no duplicates at all: 1
+highest team duplicate rate:     23.9%
+lowest team duplicate rate:      0.0%
