@@ -1,0 +1,12 @@
+# Virtual environment (never commit — rebuild from requirements.txt instead)
+.venv/
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Generated analysis outputs
+outputs/
