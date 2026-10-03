@@ -1,0 +1,12 @@
+This is an MD for choices I make regarding how to process the data.
+
+
+First choice:
+
+For the majority predictor, if there is a tie, i.e 50 approving and 50 not approving examples, or a personal tie like "Alice" having 5 approving and 5 not approving examples:
+
+Personal tie: use the overall majority for that behaviour.
+Overall tie: predict “behaviour absent.”
+
+
+
