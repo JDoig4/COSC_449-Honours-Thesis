@@ -40,6 +40,25 @@ def dedupe_frame(df):
     return df.drop_duplicates(subset=["comment_id", "Code"], ignore_index=True, keep="first")
 
 
+def binary_labels(df, behaviour):
+    """Return a 0/1 label for one behaviour on every row (utterance) of df.
+
+    Each row is one utterance with exactly one Code, and repeated rows are separate
+    instances: two Directing statements in one comment are two rows, and both get a 1.
+    Nothing is merged or collapsed, so the result lines up one-to-one with df's rows and
+    keeps df's index.
+
+    A row with no Code at all is an unannotated row, not a behaviour that is absent, so it
+    is refused instead of being quietly labelled 0. A behaviour name that never appears in
+    the data (most likely a typo) is refused too, since it would label every row 0.
+    """
+    if df["Code"].isna().any():
+        raise ValueError(f"{df['Code'].isna().sum()} rows have no Code")
+    if behaviour not in set(df["Code"]):
+        raise ValueError(f"behaviour {behaviour!r} does not appear in the Code column")
+
+    return (df["Code"] == behaviour).astype(int).rename(behaviour)
+
 if __name__ == "__main__":
     reviews = load_reviews()
     reviews.info()
