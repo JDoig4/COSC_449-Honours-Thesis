@@ -10,3 +10,6 @@ __pycache__/
 
 # Generated analysis outputs
 outputs/
+
+# pytest
+.pytest_cache/
