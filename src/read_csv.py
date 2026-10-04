@@ -30,15 +30,6 @@ def load_reviews():
 
     return all_reviews.sort_values("created_at", ignore_index=True, kind="mergesort")
 
-def dedupe_frame(df):
-    """Keep one row for each unique comment ID and code combination.
-
-    The data does not include the text or location of individual utterances,
-    so we cant tell why the same code appears more than once on a single comment.
-    These rows might represent separate utterances or could be duplicate records.
-    """
-    return df.drop_duplicates(subset=["comment_id", "Code"], ignore_index=True, keep="first")
-
 
 def binary_labels(df, behaviour):
     """Return a 0/1 label for one behaviour on every row (utterance) of df.
