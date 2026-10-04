@@ -3,11 +3,16 @@
 run from the project root:  .venv/Scripts/python.exe src/sanity_checks.py
 """
 
+import pandas as pd
+
 from run_baselines import load_data, run_behaviour
+
+# load and split the data once
+df = load_data()
 
 # run the checks on approving
 behaviour = "Approving"
-train, test, overall, personal, results = run_behaviour(load_data(), behaviour)
+train, test, overall, personal, results = run_behaviour(df, behaviour)
 
 
 print(f"{behaviour} share of training rows: {train['label'].mean()}")
@@ -54,3 +59,13 @@ for name in people_to_check:
 #the overall baseline always guesses 0, so it should be right on every non-approving row (about 77%)
 print(f"Overall accuracy: {(results['label'] == results['overall_prediction']).mean():.3f}")
 print(f"Personal accuracy: {(results['label'] == results['personal_prediction']).mean():.3f}")
+
+#class sizes: how many rows of each behaviour ended up in train and in test.
+#crosstab counts the rows for every behaviour and split combination
+sizes = pd.crosstab(df["Code"], df["split"])
+
+#share of each behaviour's rows that landed in test (should be close to 0.5 for all of them)
+sizes["test_share"] = (sizes["test"] / (sizes["train"] + sizes["test"])).round(3)
+
+print("\nClass sizes per split:")
+print(sizes.to_string())
