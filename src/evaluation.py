@@ -3,8 +3,14 @@
 run from the project root:  .venv/Scripts/python.exe src/evaluation.py
 """
 
+import os
+
+import matplotlib.pyplot as plt
+
 # these are the scoring tools from scikit-learn
-from sklearn.metrics import accuracy_score, classification_report, confusion_matrix, f1_score
+from sklearn.metrics import (
+    ConfusionMatrixDisplay, accuracy_score, classification_report, confusion_matrix, f1_score
+)
 
 
 def evaluate(actual, predicted):
@@ -25,6 +31,42 @@ def evaluate(actual, predicted):
     print(confusion_matrix(actual, predicted, labels=[0, 1]))
 
 
+
+def plot_confusion(actual, predicted, title, path):
+    """Save one picture with three confusion matrices side by side: counts, recall, precision."""
+
+    # 3 panel plot
+    fig, axes = plt.subplots(1, 3, figsize=(13, 4))
+
+    # Counts: shows the plain numbers
+    # Recall: shows what share of the real 0s and real 1s were guessed right
+    # Precision: shows what share of the 0 guesses and 1 guesses were right
+    panels = [("Counts", None), ("Recall (rows add to 1)", "true"), ("Precision (columns add to 1)", "pred")]
+
+    # draw each panel
+    for ax, (name, normalize) in zip(axes, panels):
+        # whole nums for counts, decimal for recall and precision
+        number_format = "d" if normalize is None else ".2f"
+        # draw the grid of real label against guess
+        ConfusionMatrixDisplay.from_predictions(
+            actual, predicted, labels=[0, 1], normalize=normalize,
+            values_format=number_format, cmap="Blues", colorbar=False, ax=ax,
+        )
+        # name the panel
+        ax.set_title(name)
+
+    # put title on top and set layout to tight
+    fig.suptitle(title)
+    fig.tight_layout()
+
+    # make output folder if it doesnt exist and save
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    fig.savefig(path, dpi=150)
+
+    # close fig
+    plt.close(fig)
+
+
 if __name__ == "__main__":
     # load the prediction results
     from run_baselines import behaviour, results
@@ -32,7 +74,11 @@ if __name__ == "__main__":
     # score the overall majority baseline
     print(f"=== {behaviour}: overall majority ===")
     evaluate(results["label"], results["overall_prediction"])
+    plot_confusion(results["label"], results["overall_prediction"],
+                   f"{behaviour}: overall majority", f"outputs/{behaviour}_overall.png")
 
     # score the personal majority baseline
     print(f"\n=== {behaviour}: personal majority ===")
     evaluate(results["label"], results["personal_prediction"])
+    plot_confusion(results["label"], results["personal_prediction"],
+                   f"{behaviour}: personal majority", f"outputs/{behaviour}_personal.png")
