@@ -3,7 +3,11 @@
 run from the project root:  .venv/Scripts/python.exe src/sanity_checks.py
 """
 
-from run_baselines import behaviour, overall, personal, results, test, train
+from run_baselines import load_data, run_behaviour
+
+# run the checks on approving
+behaviour = "Approving"
+train, test, overall, personal, results = run_behaviour(load_data(), behaviour)
 
 
 print(f"{behaviour} share of training rows: {train['label'].mean()}")

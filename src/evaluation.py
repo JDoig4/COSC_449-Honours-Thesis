@@ -68,17 +68,40 @@ def plot_confusion(actual, predicted, title, path):
 
 
 if __name__ == "__main__":
-    # load the prediction results
-    from run_baselines import behaviour, results
+    import pandas as pd
 
-    # score the overall majority baseline
-    print(f"=== {behaviour}: overall majority ===")
-    evaluate(results["label"], results["overall_prediction"])
-    plot_confusion(results["label"], results["overall_prediction"],
-                   f"{behaviour}: overall majority", f"outputs/{behaviour}_overall.png")
+    from run_baselines import load_data, run_behaviour
 
-    # score the personal majority baseline
-    print(f"\n=== {behaviour}: personal majority ===")
-    evaluate(results["label"], results["personal_prediction"])
-    plot_confusion(results["label"], results["personal_prediction"],
-                   f"{behaviour}: personal majority", f"outputs/{behaviour}_personal.png")
+    # load and split the data once, then reuse it for every behaviour
+    df = load_data()
+
+    # one row of scores per behaviour goes in here
+    summary = []
+
+    # go through every behaviour in alphabetical order
+    for behaviour in sorted(df["Code"].unique()):
+        train, test, overall, personal, results = run_behaviour(df, behaviour)
+
+        # score both baselines and save their pictures
+        for name in ["overall", "personal"]:
+            predicted = results[f"{name}_prediction"]
+
+            print(f"\n=== {behaviour}: {name} majority ===")
+            evaluate(results["label"], predicted)
+            plot_confusion(results["label"], predicted,
+                           f"{behaviour}: {name} majority", f"outputs/{behaviour}_{name}.png")
+
+            # keep the headline numbers for the summary table
+            summary.append({
+                "behaviour": behaviour,
+                "baseline": name,
+                "accuracy": accuracy_score(results["label"], predicted),
+                "macro_f1": f1_score(results["label"], predicted, labels=[0, 1],
+                                     average="macro", zero_division=0),
+            })
+
+    # turn the list into a table, print it, and save it
+    summary = pd.DataFrame(summary).round(3)
+    print("\n=== summary ===")
+    print(summary.to_string(index=False))
+    summary.to_csv("outputs/summary.csv", index=False)
