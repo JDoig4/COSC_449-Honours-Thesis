@@ -32,11 +32,14 @@ def evaluate(actual, predicted):
 
 
 
-def plot_confusion(actual, predicted, title, path):
+def plot_confusion(actual, predicted, title, path, behaviour):
     """Save one picture with three confusion matrices side by side: counts, recall, precision."""
 
     # 3 panel plot
     fig, axes = plt.subplots(1, 3, figsize=(13, 4))
+
+    # name the classes in words instead of 0 and 1
+    names = [f"not {behaviour}", behaviour]
 
     # Counts: shows the plain numbers
     # Recall: shows what share of the real 0s and real 1s were guessed right
@@ -49,11 +52,13 @@ def plot_confusion(actual, predicted, title, path):
         number_format = "d" if normalize is None else ".2f"
         # draw the grid of real label against guess
         ConfusionMatrixDisplay.from_predictions(
-            actual, predicted, labels=[0, 1], normalize=normalize,
+            actual, predicted, labels=[0, 1], display_labels=names, normalize=normalize,
             values_format=number_format, cmap="Blues", colorbar=False, ax=ax,
         )
-        # name the panel
+        # name the panel and the axes
         ax.set_title(name)
+        ax.set_xlabel("predicted")
+        ax.set_ylabel("real")
 
     # put title on top and set layout to tight
     fig.suptitle(title)
@@ -89,7 +94,7 @@ if __name__ == "__main__":
             print(f"\n=== {behaviour}: {name} majority ===")
             evaluate(results["label"], predicted)
             plot_confusion(results["label"], predicted,
-                           f"{behaviour}: {name} majority", f"outputs/{behaviour}_{name}.png")
+                           f"{behaviour}: {name} majority", f"outputs/{behaviour}_{name}.png", behaviour)
 
             # keep the headline numbers for the summary table
             summary.append({
